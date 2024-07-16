@@ -12,6 +12,12 @@ function activate(context) {
     console.log('Congratulations, your extension "Mohit" is now active!');
 
     let startDisposable = vscode.commands.registerCommand('Mohit.startRecording', function () {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showErrorMessage('No active text editor found.');
+            return;
+        }
+
         vscode.window.showInformationMessage('Recording started. Type your text and press Enter or ";" to log it.');
 
         inputDisposable = vscode.workspace.onDidChangeTextDocument(event => {
@@ -23,18 +29,28 @@ function activate(context) {
             if (changes.length) {
                 const change = changes[0];
                 console.log(change);
+                
                 if (change.text.includes(';') || change.text.includes('\n')) {
                     let endTime = new Date();
                     let timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
-                    writeCsv(input, startTime.toISOString(), endTime.toISOString(), timeTaken);
+                    console.log(input, " - input");
+                    writeCsv(input, startTime.toISOString(), endTime.toISOString(), timeTaken, change.text.includes('\n') == true ? "enter" : "semicolon");
                     input = ''; 
                     startTime = new Date();
                 } else if (change.text === "" && change.rangeLength > 0) {
                     let endTime = new Date();
                     let timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
-                    writeCsv(input, startTime.toISOString(), endTime.toISOString(), timeTaken);
+                    writeCsv(input, startTime.toISOString(), endTime.toISOString(), timeTaken, "backspace");
                     input = input.slice(0, -change.rangeLength);
-                } else {
+                    console.log(input);
+                } 
+                else if (change.text != "" && change.rangeLength > 0) {
+                    let endTime = new Date();
+                    let timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
+                    writeCsv(change.text, startTime.toISOString(), endTime.toISOString(), timeTaken, "suggestion");
+                    console.log(input);
+                } 
+                else {
                     input += change.text;
                 }
             }
@@ -55,40 +71,10 @@ function activate(context) {
     context.subscriptions.push(startDisposable, stopDisposable);
 }
 
-// function writeCsv(text, startTime, endTime, timeTaken) {
 
-//     if (text === '') {
-//         return; 
-//     }
-
-//     const csvLine = `"${text.replace(/"/g, '""')}",${startTime},${endTime},${timeTaken}\n`;
-
-//     if(vscode.workspace.workspaceFolders !== undefined) {
-//         let f = vscode.workspace.workspaceFolders[0].uri.fsPath ;
-        
-//         let message = `YOUR-EXTENSION: folder: ${f}` ;
-//         console.log(message);
-//         vscode.window.showInformationMessage(message);
-//         const csvPath = path.join(f, 'recordings.csv');
-//         console.log("csvPAth: " + csvPath);
-//         fs.appendFile(csvPath, csvLine, err => {
-//             if (err) {
-//                 console.log(err);
-//                 vscode.window.showErrorMessage('Error writing to CSV file');
-//             } else {
-//                 vscode.window.showInformationMessage('Text and timestamps recorded');
-//             }
-//         });
-//     } 
-//     else {
-//         let message = "YOUR-EXTENSION: Working folder not found, open a folder an try again" ;
-    
-//         vscode.window.showErrorMessage(message);
-//     }
-// }
-
-function writeCsv(text, startTime, endTime, timeTaken) {
+function writeCsv(text, startTime, endTime, timeTaken, event) {
     if (text === '') {
+        console.log("empty");
         return;
     }
 
@@ -102,12 +88,20 @@ function writeCsv(text, startTime, endTime, timeTaken) {
     const fileName = path.basename(currentFilePath, path.extname(currentFilePath));
     const csvFileName = `${fileName}_recordings.csv`;
 
-    const csvLine = `"${text.replace(/"/g, '""')}",${startTime},${endTime},${timeTaken}\n`;
+    const csvLine = `"${text}",${startTime},${endTime},${timeTaken},${event}\n`;
 
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders !== undefined) {
-        const rootPath = workspaceFolders[0].uri.fsPath;
-        const csvPath = path.join(rootPath, csvFileName);
+        // const rootPath = workspaceFolders[0].uri.fsPath;
+        const rootPath = "C:/Users/Admin/OneDrive/Desktop";
+        const dataDir = path.join(rootPath, "StudentsLogs");
+
+        // Check if the data directory exists, if not create one
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+
+        const csvPath = path.join(dataDir, csvFileName);
 
         fs.appendFile(csvPath, csvLine, err => {
             if (err) {
@@ -115,6 +109,7 @@ function writeCsv(text, startTime, endTime, timeTaken) {
                 vscode.window.showErrorMessage('Error writing to CSV file');
             } else {
                 vscode.window.showInformationMessage('Text and timestamps recorded');
+                return;
             }
         });
     } else {
