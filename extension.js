@@ -29,12 +29,24 @@ function activate(context) {
             if (changes.length) {
                 const change = changes[0];
                 console.log(change);
-                
-                if (change.text.includes(';') || change.text.includes('\n')) {
+                if(change.text.length > 1 && change.rangeLength <= 0) {
                     let endTime = new Date();
                     let timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
+                    let ev = change.text.includes('\n') == true ? "enter" : "semicolon"
+                    if (input === '') {
+                        input += change.text;
+                        ev = "copied";
+                    }
                     console.log(input, " - input");
-                    writeCsv(input, startTime.toISOString(), endTime.toISOString(), timeTaken, change.text.includes('\n') == true ? "enter" : "semicolon");
+                    writeCsv(input, startTime.toISOString(), endTime.toISOString(), timeTaken, ev);
+                    input = ''; 
+                    startTime = new Date();
+                } else if (change.text.includes(';') || change.text.includes('\n')) {
+                    let endTime = new Date();
+                    let timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
+                    let ev = change.text.includes('\n') == true ? "enter" : "semicolon"
+                    console.log(input, " - input");
+                    writeCsv(input, startTime.toISOString(), endTime.toISOString(), timeTaken, ev);
                     input = ''; 
                     startTime = new Date();
                 } else if (change.text === "" && change.rangeLength > 0) {
@@ -93,7 +105,7 @@ function writeCsv(text, startTime, endTime, timeTaken, event) {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (workspaceFolders !== undefined) {
         // const rootPath = workspaceFolders[0].uri.fsPath;
-        const rootPath = "C:/Users/Admin/OneDrive/Desktop";
+        const rootPath = "C:";
         const dataDir = path.join(rootPath, "StudentsLogs");
 
         // Check if the data directory exists, if not create one

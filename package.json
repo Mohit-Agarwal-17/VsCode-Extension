@@ -1,6 +1,7 @@
 {
   "name": "Mohit",
-  "displayName": "VsCode",
+  "displayName": "Code Logger",
+  "publisher": "MohitAgarwal-VsCode",
   "description": "Trial",
   "version": "0.0.1",
   "engines": {
