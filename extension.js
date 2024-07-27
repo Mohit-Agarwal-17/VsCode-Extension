@@ -9,7 +9,7 @@ let startTime = new Date();
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-    console.log('Congratulations, your extension "Mohit" is now active!');
+    console.log('Congratulations, your extension "Code-Line-Logger" is now active!');
 
     let startDisposable = vscode.commands.registerCommand('Mohit.startRecording', function () {
         const editor = vscode.window.activeTextEditor;
@@ -29,19 +29,7 @@ function activate(context) {
             if (changes.length) {
                 const change = changes[0];
                 console.log(change);
-                if(change.text.length > 1 && change.rangeLength <= 0) {
-                    let endTime = new Date();
-                    let timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
-                    let ev = change.text.includes('\n') == true ? "enter" : "semicolon"
-                    if (input === '') {
-                        input += change.text;
-                        ev = "copied";
-                    }
-                    console.log(input, " - input");
-                    writeCsv(input, startTime.toISOString(), endTime.toISOString(), timeTaken, ev);
-                    input = ''; 
-                    startTime = new Date();
-                } else if (change.text.includes(';') || change.text.includes('\n')) {
+                if (change.text.includes(';') || change.text.includes('\n')) {
                     let endTime = new Date();
                     let timeTaken = (endTime.getTime() - startTime.getTime()) / 1000;
                     let ev = change.text.includes('\n') == true ? "enter" : "semicolon"
