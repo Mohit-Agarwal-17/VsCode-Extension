@@ -1,9 +1,11 @@
 {
   "name": "Mohit",
+  "repository": "https://github.com/Mohit-Agarwal-17/VsCode-Extension/tree/main",
   "displayName": "Code Line Logger",
   "publisher": "MohitAgarwal-VsCode",
-  "description": "Trial",
+  "description": "The Code Line Logger is a lightweight VS Code extension that tracks and logs specific coding actions into a CSV file.",
   "version": "0.0.1",
+  "icon": "icon.jpg",
   "engines": {
     "vscode": "^1.90.0"
   },

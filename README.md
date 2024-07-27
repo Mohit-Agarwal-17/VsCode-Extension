@@ -10,6 +10,7 @@ The Code Line Logger is a VS Code extension designed to help developers track an
 - **Key Events:** Logs semicolon, enter, and backspace keystrokes to capture detailed editing actions.
 - **Suggestion Usage:** Tracks when code suggestions are accepted and used.
 - **CSV Output:** Stores all logged data in a CSV file, making it easy to analyze coding behavior and patterns.
+- **File Storage:** CSV files are created in the C drive within a folder named StudentLogs.
 
 ## How to Use
 
@@ -28,7 +29,7 @@ The Code Line Logger is a VS Code extension designed to help developers track an
 
 ## Installation
 
-1. Download and install the extension from the [VS Code Marketplace](#).
+1. Download and install the extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=MohitAgarwal-VsCode.Mohit).
 2. Restart VS Code to activate the extension.
 
 ## Feedback & Contributions
