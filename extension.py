@@ -2,7 +2,8 @@ import pandas as pd
 import re
 
 column_names = ['term', 'start_time', 'end_time', 'duration', 'action']
-df = pd.read_csv('new_recordings.csv', header=None, names=column_names)
+#Enter location of raw file
+df = pd.read_csv('recordings.csv', header=None, names=column_names)
 
 df['start_time'] = pd.to_datetime(df['start_time'])
 df['end_time'] = pd.to_datetime(df['end_time'])
@@ -91,7 +92,7 @@ summary_df = pd.DataFrame(summary_rows, columns=df.columns)
 # Append summary rows to the original DataFrame
 final_df = pd.concat([df, summary_df], ignore_index=True)
 
-output_path = 'new_final.csv'
+output_path = 'final_cleaned.csv'
 final_df.to_csv(output_path, index=False)
 
 print(f"Updated CSV file saved to {output_path}")
