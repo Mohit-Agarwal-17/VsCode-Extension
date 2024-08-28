@@ -34,7 +34,6 @@ for i in range(len(df)):
         print(f"Suggestion: {suggestion_term}")
         cleaned_suggestion = remove_symbols(suggestion_term)
         
-        # Start checking from the next row and continue until another 'enter' or 'semicolon' is encountered
         for j in range(i + 1, len(df)):
             if df.loc[j, 'action'] in ['enter', 'semicolon']:
                 enter_term = df.loc[j, 'term']
@@ -47,11 +46,9 @@ for i in range(len(df)):
                     cleaned_word = remove_symbols(word)
                     print(f"Checking cleaned word: {cleaned_word}")
                     
-                    # Check if the cleaned word is in the cleaned suggestion term
                     if cleaned_word.lower() in cleaned_suggestion.lower():
                         print(f"Match found for: {cleaned_word} in {cleaned_suggestion}")
                         
-                        # Find the exact match in the original suggestion term to replace
                         match = re.search(re.escape(cleaned_word), cleaned_suggestion, re.IGNORECASE)
                         if match:
                             start, end = match.span()
@@ -79,17 +76,14 @@ total_lines = len(df)
 total_backspace = len(df[df['backspace'] == 1])
 total_suggestion = len(df[df['suggestion'] == 1])
 
-# Create summary rows
 summary_rows = [
     ['Total lines:', total_lines, '', '', '',"",""],
     ['Backspace is used:', total_backspace, '', '', '','',''],
     ['Suggestion is used:', total_suggestion, '', '', '','','']
 ]
 
-# Convert summary rows to DataFrame
 summary_df = pd.DataFrame(summary_rows, columns=df.columns)
 
-# Append summary rows to the original DataFrame
 final_df = pd.concat([df, summary_df], ignore_index=True)
 
 output_path = 'final_cleaned.csv'
